@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotes</title>
+    <link rel="icon" href="https://i.ibb.co/9240gXC/32-D549-CB-2-E52-48-F8-A483-285-B4856200-A.jpg" type="image/x-icon">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Arsenal+SC:ital,wght@0,400;0,700;1,400;1,700&family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Edu+VIC+WA+NT+Beginner:wght@400..700&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=New+Amsterdam&family=Rowdies:wght@300;400;700&family=Teko:wght@300..700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Arsenal+SC:ital,wght@0,400;0,700;1,400;1,700&family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Edu+VIC+WA+NT+Beginner:wght@400..700&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=New+Amsterdam&family=Rowdies:wght@300;400;700&family=Teko:wght@300..700&display=swap');
+
+        body {
+            font-family: "Edu VIC WA NT Beginner", cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            flex-direction: column;
+            overflow: hidden;
+            background: url('https://images.unsplash.com/photo-1444080748397-f442aa95c3e5?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTh8fHxlbnwwfHx8fHw%3D') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+
+        #quoteButton,
+        #quizButton {
+            font-family: "New Amsterdam", sans-serif;
+            padding: 12px 24px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
+            margin-top: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        #quoteButton:hover,
+        #quizButton:hover {
+            transform: scale(1.1);
+            background-color: #ff4500;
+            box-shadow: 0 0 20px rgba(255, 105, 97, 0.6);
+        }
+
+        #loading {
+            display: none;
+            margin-top: 20px;
+            font-size: 20px;
+            color: #fff;
+        }
+
+        #quotePopup {
+            display: none;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            position: relative;
+            max-width: 70%;
+            margin: auto;
+            font-size: 22px;
+            font-style: italic;
+            color: #333;
+            z-index: 10;
+        }
+
+        #quotePopup::after {
+            content: " ";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            margin-left: -12px;
+            border-width: 12px;
+            border-style: solid;
+            border-color: transparent transparent rgba(255, 255, 255, 0.9) transparent;
+        }
+
+        #copyButton {
+            margin-top: 10px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        #copyButton:hover {
+            transform: scale(1.1);
+            background-color: #007BB5;
+        }
+
+        /* Fireworks container */
+        .fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 5;
+        }
+
+        .firework {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 0, 0, 1) 100%);
+            border-radius: 50%;
+            opacity: 0;
+            animation: explode 1s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                opacity: 1;
+                transform: scale(1) translate(-50%, -50%);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(6) translate(-50%, -50%);
+            }
+        }
+
+        /* Bintang-bintang */
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background-color: white;
+            opacity: 0.8;
+            animation: twinkle 1.5s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Nebula effect */
+        .nebula {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://source.unsplash.com/1600x900/?nebula') no-repeat center center;
+            background-size: cover;
+            opacity: 0.5;
+            z-index: 0;
+            pointer-events: none;
+            animation: nebula-animation 120s linear infinite;
+        }
+
+        @keyframes nebula-animation {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 100% 100%;
+            }
+        }
+
+        /* Light particles effect */
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
+            border-radius: 50%;
+            animation: particle-animation 5s linear infinite;
+        }
+
+        @keyframes particle-animation {
+            0% {
+                transform: scale(0) translateY(0);
+            }
+
+            100% {
+                transform: scale(1) translateY(-1000px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nebula"></div>
+
+    <div>
+        <button id="quoteButton">Quote untukmu</button>
+        <div id="loading">Loading 0%</div>
+        <div id="quotePopup">
+            <span id="quoteText"></span>
+            <div class="author" id="quoteAuthor"></div>
+            <button id="copyButton">Copy Quote</button>
+        </div>
+        <a href="https://katolikclip.github.io/kuis/"><button id="quizButton" style="display:none;">Kuis
+                Alkitab</button></a>
+    </div>
+
+    <!-- Fireworks container -->
+    <div class="fireworks" id="fireworks"></div>
+
+    <!-- Star field -->
+    <div id="stars"></div>
+
+    <!-- Light particles effect -->
+    <div id="particles"></div>
+
+    <script>
+        const quotes = [
+            { text: "Cinta adalah nama lain dari kekristenan, dan cinta adalah apa yang harus kita tunjukkan kepada sesama kita.", author: "St. Agustinus" },
+            { text: "Tuhan sering menyembunyikan rahasia-Nya dalam kesederhanaan kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Jangan pernah meremehkan kekuatan doa yang sederhana namun tulus.", author: "St. Teresa Avila" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam kesederhanaan dan kerendahan hati.", author: "St. Fransiskus dari Assisi" },
+            { text: "Masing-masing dari kita memiliki kemampuan untuk mencintai secara tak terbatas dan tanpa syarat.", author: "St. Teresa dari Kalkuta" },
+            { text: "Ketika kamu merasa tidak mampu, ingatlah bahwa Tuhan dapat melakukan hal-hal besar melalui kamu.", author: "St. Teresa Avila" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah kontribusi besar bagi kerajaan Tuhan.", author: "St. Theresia dari Lisieux" },
+            { text: "Berani menghadapi tantangan dengan iman, karena Tuhan akan selalu menyertai kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kehidupan Kristen adalah panggilan untuk menyempurnakan cinta kita kepada Tuhan dan sesama.", author: "St. Johannes dari Salib" },
+            { text: "Jangan biarkan kekhawatiran duniawi menghalangi kamu dari hubungan mendalam dengan Tuhan.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam setiap situasi, pilihlah untuk mencintai dan melayani, karena itulah panggilan kita sebagai Kristen.", author: "St. Fransiskus dari Assisi" },
+            { text: "Tuhan tidak pernah menguji kita lebih dari apa yang kita mampu tanggung.", author: "St. Paulus" },
+            { text: "Setiap hari adalah kesempatan untuk mendekatkan diri kepada Tuhan melalui tindakan cinta dan pelayanan.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih dan doa adalah dua alat paling kuat yang kita miliki untuk membangun kerajaan Tuhan di bumi.", author: "St. Teresa Avila" },
+            { text: "Kehidupan Kristen yang sejati terletak pada kesetiaan kita kepada panggilan Tuhan dan pelayanan kepada sesama.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta Tuhan adalah fondasi yang memberi kekuatan dan arah pada kehidupan kita.", author: "St. Agustinus" },
+            { text: "Hiduplah dengan penuh pengharapan, karena Tuhan selalu memiliki rencana yang lebih besar untuk kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam segala hal, carilah Tuhan dan segala sesuatu akan menemukan tempatnya.", author: "St. Johannes dari Salib" },
+            { text: "Ketulusan dalam doa membawa kita lebih dekat kepada Tuhan dan memperdalam hubungan kita dengan-Nya.", author: "St. Teresa Avila" },
+            { text: "Tuhan ada dalam setiap tindakan cinta yang kita lakukan, sekecil apapun.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidupmu adalah anugerah dan karunia dari Tuhan, gunakanlah dengan bijaksana.", author: "St. Teresa dari Kalkuta" },
+            { text: "Cinta yang tulus adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kita harus menjadi terang di dunia ini dengan cara hidup yang mencerminkan cinta dan kebaikan Tuhan.", author: "St. Agustinus" },
+            { text: "Jangan hanya mencari Tuhan dalam pengalaman luar, tetapi carilah Dia dalam kedalaman hatimu.", author: "St. Johannes dari Salib" },
+            { text: "Setiap hari adalah kesempatan untuk mencintai Tuhan lebih dalam dan melayani sesama dengan lebih penuh.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup dengan kasih adalah cara kita menunjukkan kepada dunia apa artinya menjadi seorang Kristen.", author: "St. Teresa Avila" },
+            { text: "Ketika kita berdoa, kita tidak mengubah kehendak Tuhan, tetapi kita membuka hati kita untuk menerima kehendak-Nya.", author: "St. Teresa dari Lisieux" },
+            { text: "Setiap tindakan cinta, sekecil apapun, adalah langkah menuju kerajaan Tuhan di bumi.", author: "St. Teresa dari Kalkuta" },
+            { text: "Tuhan hadir dalam setiap langkah hidup kita, dalam suka dan duka, dalam kemenangan dan kekalahan.", author: "St. Fransiskus dari Assisi" },
+            { text: "Di dalam Tuhan, kita menemukan kedamaian yang melampaui segala pengertian.", author: "St. Agustinus" },
+            { text: "Jangan biarkan kesulitan menghentikanmu dari melayani Tuhan dan sesama dengan penuh kasih.", author: "St. Teresa Avila" },
+            { text: "Kasih dan kesederhanaan adalah kunci untuk hidup yang penuh makna dan mendalam.", author: "St. Theresia dari Lisieux" },
+            { text: "Kehidupan Kristen adalah perjalanan untuk mencari Tuhan dalam setiap aspek kehidupan kita.", author: "St. Johannes dari Salib" },
+            { text: "Doa adalah jembatan yang menghubungkan hati kita dengan Tuhan dan membawa kita lebih dekat kepada-Nya.", author: "St. Teresa dari Kalkuta" },
+            { text: "Setiap hari adalah kesempatan untuk mencintai Tuhan dan sesama dengan lebih tulus dan dalam.", author: "St. Theresia dari Lisieux" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam tindakan cinta yang sederhana dan tulus.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta adalah penghubung utama antara kita dan Tuhan, dan juga antara kita dan sesama.", author: "St. Agustinus" },
+            { text: "Jangan takut untuk menunjukkan cinta dan kebaikan, karena dalam hal itu kita mencerminkan kasih Tuhan.", author: "St. Teresa Avila" },
+            { text: "Tuhan tidak pernah meninggalkan kita dalam kesulitan; Ia selalu ada untuk memberi kekuatan dan penghiburan.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kesederhanaan dan kerendahan hati adalah jalan menuju hubungan yang lebih dalam dengan Tuhan.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Theresia dari Lisieux" },
+            { text: "Doa yang tulus memiliki kekuatan untuk mengubah hati dan hidup kita.", author: "St. Teresa Avila" },
+            { text: "Cinta adalah kekuatan yang dapat mengatasi segala rintangan dan membangun kerajaan Tuhan di bumi.", author: "St. Teresa dari Kalkuta" },
+            { text: "Tuhan selalu memberikan yang terbaik untuk kita, bahkan ketika kita tidak memahaminya.", author: "St. Agustinus" },
+            { text: "Dalam setiap kesulitan, ingatlah bahwa Tuhan sedang membimbingmu menuju sesuatu yang lebih baik.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kehidupan Kristen adalah tentang mengasihi dan melayani, mengikuti jejak Kristus dalam segala hal.", author: "St. Teresa dari Kalkuta" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah kontribusi besar untuk kerajaan Tuhan.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan selalu memberikan kekuatan untuk menghadapi tantangan hidup dan mempercayai-Nya.", author: "St. Johannes dari Salib" },
+            { text: "Hidup dengan penuh pengharapan dan iman, karena Tuhan selalu memiliki rencana yang lebih baik untuk kita.", author: "St. Teresa Avila" },
+            { text: "Cinta Tuhan tidak hanya mengubah hidup kita, tetapi juga mengubah dunia di sekitar kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Jangan pernah meremehkan kekuatan doa yang sederhana namun penuh iman.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta adalah hadiah yang paling berharga yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Agustinus" },
+            { text: "Hiduplah dengan penuh kasih dan kerendahan hati, dan kamu akan menemukan kedamaian sejati.", author: "St. Theresia dari Lisieux" },
+            { text: "Kehidupan Kristen yang sejati adalah tentang membagikan kasih Tuhan kepada semua orang di sekitar kita.", author: "St. Teresa Avila" },
+            { text: "Dalam setiap doa, carilah Tuhan dan Dia akan membimbingmu dengan kasih dan pengertian-Nya.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam segala hal, percayalah kepada Tuhan dan segala sesuatu akan menjadi mungkin.", author: "St. Fransiskus dari Assisi" },
+            { text: "Setiap hari adalah kesempatan baru untuk mencintai Tuhan dan melayani sesama.", author: "St. Teresa Avila" },
+            { text: "Cinta adalah esensi dari hidup Kristen, dan melalui cinta kita menunjukkan iman kita.", author: "St. Agustinus" },
+            { text: "Kemuliaan Tuhan terletak pada kesederhanaan dan kerendahan hati kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Doa yang tulus adalah kunci untuk membuka pintu hati kita kepada Tuhan.", author: "St. Teresa dari Kalkuta" },
+            { text: "Tuhan selalu memberi kita kekuatan untuk menghadapi tantangan hidup, bahkan saat kita merasa tidak mampu.", author: "St. Johannes dari Salib" },
+            { text: "Cinta Tuhan melampaui segala pengertian dan memberikan makna pada hidup kita.", author: "St. Teresa Avila" },
+            { text: "Setiap tindakan cinta, sekecil apapun, adalah langkah menuju kerajaan Tuhan di bumi.", author: "St. Theresia dari Lisieux" },
+            { text: "Jangan biarkan kesulitan menghalangi kamu dari melayani Tuhan dan sesama dengan sepenuh hati.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hidupmu adalah anugerah dari Tuhan; gunakanlah untuk mencintai dan melayani.", author: "St. Fransiskus dari Assisi" },
+            { text: "Tuhan ada dalam setiap tindakan kasih yang kita lakukan, sekecil apapun.", author: "St. Agustinus" },
+            { text: "Berdoalah dengan penuh iman, karena doa memiliki kekuatan untuk mengubah hidup kita.", author: "St. Teresa Avila" },
+            { text: "Kasih adalah penghubung utama antara kita dan Tuhan, dan juga antara kita dan sesama.", author: "St. Theresia dari Lisieux" },
+            { text: "Dalam setiap kesulitan, Tuhan selalu memberikan kekuatan dan penghiburan.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hiduplah dengan penuh kasih dan pengharapan, karena Tuhan selalu memiliki rencana yang lebih baik untuk kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Tuhan tidak pernah meninggalkan kita dalam kesulitan; Ia selalu hadir untuk memberi kekuatan dan penghiburan.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Theresia dari Lisieux" },
+            { text: "Ketulusan dalam doa membawa kita lebih dekat kepada Tuhan dan memperdalam hubungan kita dengan-Nya.", author: "St. Teresa Avila" },
+            { text: "Hidup dalam kasih adalah cara kita menunjukkan kepada dunia apa artinya menjadi seorang Kristen.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kehidupan Kristen adalah tentang mengasihi dan melayani, mengikuti jejak Kristus dalam segala hal.", author: "St. Teresa dari Kalkuta" },
+            { text: "Jangan biarkan kekhawatiran duniawi menghalangi kamu dari hubungan mendalam dengan Tuhan.", author: "St. Johannes dari Salib" },
+            { text: "Setiap hari adalah kesempatan untuk mendekatkan diri kepada Tuhan melalui tindakan cinta dan pelayanan.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidupmu adalah anugerah dan karunia dari Tuhan, gunakanlah dengan bijaksana.", author: "St. Teresa Avila" },
+            { text: "Kasih dan doa adalah dua alat paling kuat yang kita miliki untuk membangun kerajaan Tuhan di bumi.", author: "St. Agustinus" },
+            { text: "Tuhan selalu memberikan yang terbaik untuk kita, bahkan ketika kita tidak memahaminya.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam tindakan cinta yang sederhana dan tulus.", author: "St. Theresia dari Lisieux" },
+            { text: "Cinta adalah kunci untuk hidup yang penuh makna dan mendalam.", author: "St. Teresa dari Kalkuta" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah kontribusi besar untuk kerajaan Tuhan.", author: "St. Teresa Avila" },
+            { text: "Cinta Tuhan tidak hanya mengubah hidup kita, tetapi juga mengubah dunia di sekitar kita.", author: "St. Johannes dari Salib" },
+            { text: "Jangan pernah meremehkan kekuatan doa yang sederhana namun penuh iman.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan selalu memberikan kekuatan untuk menghadapi tantangan hidup dan mempercayai-Nya.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kesederhanaan dan kerendahan hati adalah jalan menuju hubungan yang lebih dalam dengan Tuhan.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta adalah nama lain dari kekristenan, dan melalui cinta kita menunjukkan iman kita.", author: "St. Agustinus" },
+            { text: "Dalam segala hal, percayalah kepada Tuhan dan segala sesuatu akan menjadi mungkin.", author: "St. Teresa Avila" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih adalah penghubung utama antara kita dan Tuhan, dan juga antara kita dan sesama.", author: "St. Theresia dari Lisieux" },
+            { text: "Kehidupan Kristen yang sejati adalah tentang membagikan kasih Tuhan kepada semua orang di sekitar kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Doa adalah jembatan yang menghubungkan hati kita dengan Tuhan dan membawa kita lebih dekat kepada-Nya.", author: "St. Teresa dari Kalkuta" },
+            { text: "Setiap hari adalah kesempatan untuk mencintai Tuhan dan sesama dengan lebih tulus dan dalam.", author: "St. Theresia dari Lisieux" },
+            { text: "Dalam kesederhanaan dan kerendahan hati kita menemukan kemuliaan Tuhan.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kehidupan Kristen adalah perjalanan untuk mencari Tuhan dalam setiap aspek kehidupan kita.", author: "St. Teresa Avila" },
+            { text: "Tuhan selalu ada dalam setiap langkah hidup kita, dalam suka dan duka, dalam kemenangan dan kekalahan.", author: "St. Agustinus" },
+            { text: "Hiduplah dengan penuh pengharapan, karena Tuhan selalu memiliki rencana yang lebih besar untuk kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam setiap doa, carilah Tuhan dan Dia akan membimbingmu dengan kasih dan pengertian-Nya.", author: "St. Johannes dari Salib" },
+            { text: "Hidup dalam kasih adalah cara kita menunjukkan kepada dunia apa artinya menjadi seorang Kristen.", author: "St. Theresia dari Lisieux" },
+            { text: "Ketulusan dalam doa membawa kita lebih dekat kepada Tuhan dan memperdalam hubungan kita dengan-Nya.", author: "St. Teresa Avila" },
+            { text: "Kasih Tuhan adalah fondasi yang memberi kekuatan dan arah pada kehidupan kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Jangan pernah meremehkan kekuatan doa yang sederhana namun tulus.", author: "St. Theresia dari Lisieux" },
+            { text: "Cinta Tuhan melampaui segala pengertian dan memberikan makna pada hidup kita.", author: "St. Teresa Avila" },
+            { text: "Hidup dengan penuh kasih dan pengharapan, karena Tuhan selalu memiliki rencana yang lebih baik untuk kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kesederhanaan dan kerendahan hati adalah jalan menuju hubungan yang lebih dalam dengan Tuhan.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Agustinus" },
+            { text: "Hidupmu adalah anugerah dan karunia dari Tuhan, gunakanlah dengan bijaksana.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan selalu memberikan yang terbaik untuk kita, bahkan ketika kita tidak memahaminya.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam setiap kesulitan, ingatlah bahwa Tuhan sedang membimbingmu menuju sesuatu yang lebih baik.", author: "St. Fransiskus dari Assisi" },
+            { text: "Tuhan hadir dalam setiap tindakan kecil kita, terutama saat kita melakukan sesuatu dengan cinta dan kerendahan hati.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih Tuhan tidak mengenal batas; itulah yang membuat hidup kita begitu berarti.", author: "St. Theresia dari Lisieux" },
+            { text: "Setiap hari adalah kesempatan untuk memperdalam hubungan kita dengan Tuhan melalui tindakan cinta dan pelayanan.", author: "St. Teresa Avila" },
+            { text: "Cinta Tuhan melampaui segala pengertian dan memberikan makna pada hidup kita.", author: "St. Agustinus" },
+            { text: "Dalam doa kita, kita menyadari betapa besar kasih Tuhan kepada kita dan kepada semua ciptaan-Nya.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Theresia dari Lisieux" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam kesederhanaan dan kerendahan hati kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Setiap tindakan cinta, sekecil apapun, adalah langkah menuju kerajaan Tuhan di bumi.", author: "St. Teresa Avila" },
+            { text: "Tuhan ada dalam setiap tindakan kasih yang kita lakukan, sekecil apapun.", author: "St. Teresa dari Kalkuta" },
+            { text: "Cinta adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Agustinus" },
+            { text: "Hidupmu adalah anugerah dan karunia dari Tuhan; gunakanlah dengan bijaksana.", author: "St. Theresia dari Lisieux" },
+            { text: "Kehidupan Kristen adalah perjalanan untuk mencari Tuhan dalam setiap aspek kehidupan kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta Tuhan melampaui segala pengertian dan memberikan makna pada hidup kita.", author: "St. Teresa Avila" },
+            { text: "Berdoalah dengan penuh iman, karena doa memiliki kekuatan untuk mengubah hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan selalu memberikan kekuatan untuk menghadapi tantangan hidup dan mempercayai-Nya.", author: "St. Teresa dari Kalkuta" },
+            { text: "Setiap hari adalah kesempatan baru untuk mencintai Tuhan dan melayani sesama.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih adalah penghubung utama antara kita dan Tuhan, dan juga antara kita dan sesama.", author: "St. Agustinus" },
+            { text: "Dalam setiap doa, carilah Tuhan dan Dia akan membimbingmu dengan kasih dan pengertian-Nya.", author: "St. Teresa Avila" },
+            { text: "Hidup dalam kasih adalah cara kita menunjukkan kepada dunia apa artinya menjadi seorang Kristen.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan tidak pernah meninggalkan kita dalam kesulitan; Ia selalu ada untuk memberi kekuatan dan penghiburan.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kesederhanaan dan kerendahan hati adalah jalan menuju hubungan yang lebih dalam dengan Tuhan.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Agustinus" },
+            { text: "Hiduplah dengan penuh kasih dan pengharapan, karena Tuhan selalu memiliki rencana yang lebih baik untuk kita.", author: "St. Teresa Avila" },
+            { text: "Dalam segala hal, percayalah kepada Tuhan dan segala sesuatu akan menjadi mungkin.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan hadir dalam setiap tindakan kecil kita, terutama saat kita melakukan sesuatu dengan cinta dan kerendahan hati.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Fransiskus dari Assisi" },
+            { text: "Setiap hari adalah kesempatan untuk memperdalam hubungan kita dengan Tuhan melalui tindakan cinta dan pelayanan.", author: "St. Teresa Avila" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam kesederhanaan dan kerendahan hati kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Cinta Tuhan melampaui segala pengertian dan memberikan makna pada hidup kita.", author: "St. Agustinus" },
+            { text: "Doa yang tulus adalah kunci untuk membuka pintu hati kita kepada Tuhan.", author: "St. Teresa dari Kalkuta" },
+            { text: "Tuhan tidak pernah meninggalkan kita dalam kesulitan; Ia selalu ada untuk memberi kekuatan dan penghiburan.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta adalah penghubung utama antara kita dan Tuhan, dan juga antara kita dan sesama.", author: "St. Agustinus" },
+            { text: "Hidup dalam kasih adalah cara kita menunjukkan kepada dunia apa artinya menjadi seorang Kristen.", author: "St. Theresia dari Lisieux" },
+            { text: "Kehidupan Kristen adalah perjalanan untuk mencari Tuhan dalam setiap aspek kehidupan kita.", author: "St. Teresa Avila" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah kontribusi besar untuk kerajaan Tuhan.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam segala hal, percayalah kepada Tuhan dan segala sesuatu akan menjadi mungkin.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam kesederhanaan dan kerendahan hati kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Cinta adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Agustinus" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Teresa dari Kalkuta" },
+            { text: "Jangan pernah meremehkan kekuatan doa yang sederhana namun penuh iman.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan selalu memberikan kekuatan untuk menghadapi tantangan hidup dan mempercayai-Nya.", author: "St. Teresa Avila" },
+            { text: "Kesederhanaan dan kerendahan hati adalah jalan menuju hubungan yang lebih dalam dengan Tuhan.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hiduplah dengan penuh kasih dan pengharapan, karena Tuhan selalu memiliki rencana yang lebih baik untuk kita.", author: "St. Agustinus" },
+            { text: "Cinta Tuhan melampaui segala pengertian dan memberikan makna pada hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam doa kita, kita menyadari betapa besar kasih Tuhan kepada kita dan kepada semua ciptaan-Nya.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidupmu adalah anugerah dan karunia dari Tuhan; gunakanlah dengan bijaksana.", author: "St. Teresa Avila" },
+            { text: "Tuhan ada dalam setiap tindakan kasih yang kita lakukan, sekecil apapun.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih adalah kekuatan yang mengubah dan memperbaiki segala sesuatu.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam doa kita, kita tidak hanya berbicara kepada Tuhan, tetapi juga mendengarkan-Nya.", author: "St. Fransiskus dari Assisi" },
+            { text: "Tuhan memberi kita hari-hari yang penuh berkat; kita hanya perlu menyadari dan mensyukuri anugerah-Nya.", author: "St. Agustinus" },
+            { text: "Hidup kita seharusnya mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Teresa Avila" },
+            { text: "Kemuliaan Tuhan dapat ditemukan dalam kesederhanaan dan pengabdian sehari-hari.", author: "St. Theresia dari Lisieux" },
+            { text: "Cinta Tuhan adalah sumber dari semua kebaikan dan kebahagiaan dalam hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Setiap tindakan kasih, sekecil apapun, adalah wujud nyata dari iman kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Tuhan memanggil kita untuk mencintai satu sama lain dengan cara yang sama seperti Dia mencintai kita.", author: "St. Agustinus" },
+            { text: "Hidup dalam kasih adalah panggilan kita sebagai orang Kristen; melalui kasih, kita mewujudkan iman kita.", author: "St. Teresa Avila" },
+            { text: "Ketulusan dalam doa memungkinkan kita untuk lebih dekat dengan Tuhan dan mengalami kasih-Nya.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan selalu ada untuk memberikan kekuatan dan penghiburan dalam setiap situasi hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Setiap hari adalah kesempatan untuk menunjukkan kasih Tuhan melalui tindakan kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta adalah bagian tak terpisahkan dari kehidupan Kristen; itu adalah cara kita menunjukkan iman kita.", author: "St. Agustinus" },
+            { text: "Dalam kesulitan, kita harus tetap percaya bahwa Tuhan memiliki rencana yang lebih besar untuk kita.", author: "St. Teresa Avila" },
+            { text: "Tuhan selalu memberi kita kekuatan dan penghiburan dalam menghadapi segala tantangan.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih Tuhan tidak pernah berakhir dan selalu ada untuk kita, kapan pun kita membutuhkannya.", author: "St. Teresa dari Kalkuta" },
+            { text: "Cinta adalah bahasa universal yang menghubungkan kita dengan Tuhan dan satu sama lain.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup dalam kasih adalah jalan menuju kedamaian dan kebahagiaan sejati.", author: "St. Agustinus" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah sumbangan besar untuk kerajaan Tuhan di bumi.", author: "St. Teresa Avila" },
+            { text: "Tuhan memberikan kita kekuatan untuk menjalani hidup dengan penuh kasih dan iman.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup kita harus menjadi cerminan dari kasih Tuhan yang melimpah dalam diri kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kemuliaan Tuhan ditemukan dalam tindakan cinta yang sederhana dan tulus.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta Tuhan melampaui segala pengertian dan membawa makna pada hidup kita.", author: "St. Agustinus" },
+            { text: "Hiduplah dengan penuh iman dan kasih, karena Tuhan selalu ada untuk membimbing dan mendukung kita.", author: "St. Teresa Avila" },
+            { text: "Doa yang tulus membawa kita lebih dekat kepada Tuhan dan membuka hati kita untuk menerima kasih-Nya.", author: "St. Theresia dari Lisieux" },
+            { text: "Setiap hari adalah anugerah dan kesempatan untuk mencintai Tuhan dan sesama dengan lebih dalam.", author: "St. Teresa dari Kalkuta" },
+            { text: "Tuhan tidak pernah meninggalkan kita; Ia selalu ada untuk memberikan kekuatan dan penghiburan.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup dalam kasih adalah cara kita menunjukkan kepada dunia apa artinya menjadi seorang Kristen.", author: "St. Agustinus" },
+            { text: "Dalam segala hal, percayalah kepada Tuhan dan segala sesuatu akan menjadi mungkin.", author: "St. Teresa Avila" },
+            { text: "Kasih Tuhan adalah kekuatan yang mengubah dan memperbaiki segala sesuatu dalam hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Cinta adalah bahasa universal yang menghubungkan kita dengan Tuhan dan satu sama lain.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hidup kita harus menjadi cerminan dari kasih Tuhan yang melimpah dalam diri kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah sumbangan besar untuk kerajaan Tuhan di bumi.", author: "St. Agustinus" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Teresa Avila" },
+            { text: "Cinta Tuhan melampaui segala pengertian dan memberikan makna pada hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidupmu adalah anugerah dan karunia dari Tuhan; gunakanlah dengan bijaksana.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam segala hal, percayalah kepada Tuhan dan segala sesuatu akan menjadi mungkin.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Agustinus" },
+            { text: "Tuhan selalu ada untuk memberikan kekuatan dan penghiburan dalam setiap situasi hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Setiap hari adalah kesempatan untuk memperdalam hubungan kita dengan Tuhan melalui tindakan cinta dan pelayanan.", author: "St. Teresa Avila" },
+            { text: "Kemuliaan Tuhan ditemukan dalam kesederhanaan dan pengabdian sehari-hari.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih Tuhan adalah sumber segala kekuatan dan penghiburan dalam hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Doa adalah jembatan yang menghubungkan hati kita dengan kasih Tuhan.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hidup kita harus mencerminkan kasih dan kemuliaan Tuhan dalam setiap tindakan kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kemuliaan Tuhan dapat ditemukan dalam tindakan sederhana yang dilakukan dengan penuh kasih.", author: "St. Agustinus" },
+            { text: "Setiap hari adalah kesempatan untuk lebih mendalam dalam hubungan kita dengan Tuhan.", author: "St. Teresa Avila" },
+            { text: "Cinta Tuhan melampaui segala batas dan memberikan makna yang mendalam pada hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hidup kita harus diisi dengan tindakan kasih yang tulus dan pelayanan kepada sesama.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan hadir dalam setiap tindakan kecil kita yang dilakukan dengan cinta dan kerendahan hati.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih adalah kekuatan yang mengubah dan memperbaiki segala sesuatu dalam hidup kita.", author: "St. Agustinus" },
+            { text: "Doa yang tulus adalah kunci untuk membuka hati kita kepada Tuhan dan mengalami kasih-Nya.", author: "St. Teresa Avila" },
+            { text: "Dalam setiap doa, carilah Tuhan dan Dia akan membimbingmu dengan kasih dan pengertian-Nya.", author: "St. Theresia dari Lisieux" },
+            { text: "Setiap tindakan kasih yang kecil, namun penuh iman, adalah kontribusi besar untuk kerajaan Tuhan di bumi.", author: "St. Teresa dari Kalkuta" },
+            { text: "Tuhan tidak pernah meninggalkan kita; Ia selalu ada untuk memberikan kekuatan dan penghiburan.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta adalah bahasa universal yang menghubungkan kita dengan Tuhan dan satu sama lain.", author: "St. Agustinus" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Teresa Avila" },
+            { text: "Kasih Tuhan melampaui segala pengertian dan memberikan makna pada hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidupmu adalah anugerah dan karunia dari Tuhan; gunakanlah dengan bijaksana.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam kesederhanaan dan kerendahan hati kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup dalam kasih adalah jalan menuju kedamaian dan kebahagiaan sejati.", author: "St. Agustinus" },
+            { text: "Tuhan selalu memberi kita kekuatan untuk menjalani hidup dengan penuh kasih dan iman.", author: "St. Teresa Avila" },
+            { text: "Setiap hari adalah kesempatan baru untuk mencintai Tuhan dan melayani sesama dengan lebih dalam.", author: "St. Theresia dari Lisieux" },
+            { text: "Cinta Tuhan tidak mengenal batas; itulah yang membuat hidup kita begitu berarti.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam doa kita, kita menyadari betapa besar kasih Tuhan kepada kita dan kepada semua ciptaan-Nya.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Agustinus" },
+            { text: "Hidup kita harus menjadi cerminan dari kasih Tuhan yang melimpah dalam diri kita.", author: "St. Teresa Avila" },
+            { text: "Doa yang tulus memungkinkan kita untuk lebih dekat dengan Tuhan dan mengalami kasih-Nya.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan selalu ada untuk memberikan kekuatan dan penghiburan dalam setiap situasi hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kemuliaan Tuhan ditemukan dalam tindakan cinta yang sederhana dan tulus.", author: "St. Fransiskus dari Assisi" },
+            { text: "Setiap hari adalah anugerah dan kesempatan untuk mencintai Tuhan dan sesama dengan lebih dalam.", author: "St. Agustinus" },
+            { text: "Hidup kita harus mencerminkan kasih dan kemuliaan Tuhan dalam setiap tindakan kita.", author: "St. Teresa Avila" },
+            { text: "Cinta Tuhan melampaui segala batas dan memberikan makna yang mendalam pada hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih adalah kekuatan yang mengubah dan memperbaiki segala sesuatu dalam hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam segala hal, percayalah kepada Tuhan dan segala sesuatu akan menjadi mungkin.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Agustinus" },
+            { text: "Cinta adalah bahasa universal yang menghubungkan kita dengan Tuhan dan satu sama lain.", author: "St. Teresa Avila" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah sumbangan besar untuk kerajaan Tuhan di bumi.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan memanggil kita untuk mencintai satu sama lain dengan cara yang sama seperti Dia mencintai kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam kesederhanaan dan kerendahan hati kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup kita harus diisi dengan tindakan kasih yang tulus dan pelayanan kepada sesama.", author: "St. Agustinus" },
+            { text: "Kasih Tuhan adalah sumber dari semua kebaikan dan kebahagiaan dalam hidup kita.", author: "St. Teresa Avila" },
+            { text: "Dalam doa kita, kita tidak hanya berbicara kepada Tuhan, tetapi juga mendengarkan-Nya.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup kita seharusnya mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Tuhan tidak pernah meninggalkan kita dalam kesulitan; Ia selalu ada untuk memberi kekuatan dan penghiburan.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih adalah bahasa universal yang menghubungkan kita dengan Tuhan dan satu sama lain.", author: "St. Agustinus" },
+            { text: "Dalam setiap tindakan cinta, kita membawa kemuliaan Tuhan ke dunia ini.", author: "St. Teresa dari Kalkuta" },
+            { text: "Doa adalah jembatan yang menghubungkan kita dengan Tuhan dan membuka hati kita untuk kasih-Nya.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup kita harus menjadi cerminan dari kasih Tuhan yang melimpah dalam diri kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih Tuhan adalah sumber dari semua kebaikan dan kebahagiaan dalam hidup kita.", author: "St. Agustinus" },
+            { text: "Setiap hari adalah kesempatan untuk mencintai Tuhan dan melayani sesama dengan lebih dalam.", author: "St. Teresa Avila" },
+            { text: "Tuhan memanggil kita untuk mencintai satu sama lain dengan cara yang sama seperti Dia mencintai kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Cinta Tuhan melampaui segala pengertian dan memberikan makna pada hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup kita seharusnya mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kemuliaan Tuhan dapat ditemukan dalam kesederhanaan dan pengabdian sehari-hari.", author: "St. Agustinus" },
+            { text: "Doa yang tulus adalah kunci untuk membuka hati kita kepada Tuhan dan mengalami kasih-Nya.", author: "St. Teresa Avila" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah sumbangan besar untuk kerajaan Tuhan di bumi.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih adalah kekuatan yang mengubah dan memperbaiki segala sesuatu dalam hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Fransiskus dari Assisi" },
+            { text: "Tuhan tidak pernah meninggalkan kita; Ia selalu ada untuk memberikan kekuatan dan penghiburan.", author: "St. Agustinus" },
+            { text: "Kasih adalah bahasa universal yang menghubungkan kita dengan Tuhan dan satu sama lain.", author: "St. Teresa Avila" },
+            { text: "Hidup kita harus diisi dengan tindakan kasih yang tulus dan pelayanan kepada sesama.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan memberikan kita hari-hari yang penuh berkat; kita hanya perlu menyadari dan mensyukuri anugerah-Nya.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam kesederhanaan dan kerendahan hati kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Dalam segala hal, percayalah kepada Tuhan dan segala sesuatu akan menjadi mungkin.", author: "St. Agustinus" },
+            { text: "Hidup dalam kasih adalah jalan menuju kedamaian dan kebahagiaan sejati.", author: "St. Teresa Avila" },
+            { text: "Setiap hari adalah anugerah dan kesempatan untuk mencintai Tuhan dan sesama dengan lebih dalam.", author: "St. Theresia dari Lisieux" },
+            { text: "Cinta Tuhan tidak mengenal batas; itulah yang membuat hidup kita begitu berarti.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hidupmu adalah anugerah dan karunia dari Tuhan; gunakanlah dengan bijaksana.", author: "St. Fransiskus dari Assisi" },
+            { text: "Dalam doa kita, kita tidak hanya berbicara kepada Tuhan, tetapi juga mendengarkan-Nya.", author: "St. Agustinus" },
+            { text: "Kemuliaan Tuhan ditemukan dalam tindakan cinta yang sederhana dan tulus.", author: "St. Teresa Avila" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah kontribusi besar untuk kerajaan Tuhan di bumi.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan memanggil kita untuk mencintai satu sama lain dengan cara yang sama seperti Dia mencintai kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih adalah bahasa universal yang menghubungkan kita dengan Tuhan dan satu sama lain.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup kita harus mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Agustinus" },
+            { text: "Cinta adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Teresa Avila" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih Tuhan melampaui segala batas dan memberikan makna yang mendalam pada hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Setiap hari adalah kesempatan untuk memperdalam hubungan kita dengan Tuhan melalui tindakan cinta dan pelayanan.", author: "St. Fransiskus dari Assisi" },
+            { text: "Tuhan selalu ada untuk memberikan kekuatan dan penghiburan dalam setiap situasi hidup kita.", author: "St. Agustinus" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam kesederhanaan dan kerendahan hati kita.", author: "St. Teresa Avila" },
+            { text: "Dalam doa kita, carilah Tuhan dan Dia akan membimbingmu dengan kasih dan pengertian-Nya.", author: "St. Theresia dari Lisieux" },
+            { text: "Cinta adalah kekuatan yang mengubah dan memperbaiki segala sesuatu dalam hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hidup kita seharusnya mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih Tuhan adalah sumber dari semua kebaikan dan kebahagiaan dalam hidup kita.", author: "St. Agustinus" },
+            { text: "Tuhan memanggil kita untuk mencintai satu sama lain dengan cara yang sama seperti Dia mencintai kita.", author: "St. Teresa Avila" },
+            { text: "Hidup dalam kasih adalah jalan menuju kedamaian dan kebahagiaan sejati.", author: "St. Theresia dari Lisieux" },
+            { text: "Cinta Tuhan tidak mengenal batas; itulah yang membuat hidup kita begitu berarti.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam segala hal, percayalah kepada Tuhan dan segala sesuatu akan menjadi mungkin.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Agustinus" },
+            { text: "Setiap hari adalah kesempatan baru untuk mencintai Tuhan dan melayani sesama dengan lebih dalam.", author: "St. Teresa Avila" },
+            { text: "Kemuliaan Tuhan ditemukan dalam tindakan cinta yang sederhana dan tulus.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan memberikan kita hari-hari yang penuh berkat; kita hanya perlu menyadari dan mensyukuri anugerah-Nya.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih adalah kekuatan yang mengubah dan memperbaiki segala sesuatu dalam hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup kita harus diisi dengan tindakan kasih yang tulus dan pelayanan kepada sesama.", author: "St. Fransiskus dari Assisi" },
+            { text: "Doa adalah cara kita untuk berbicara kepada Tuhan dan mendengarkan-Nya.", author: "St. Agustinus" },
+            { text: "Kasih Tuhan adalah sumber dari semua kebaikan dan kebahagiaan dalam hidup kita.", author: "St. Teresa Avila" },
+            { text: "Hidup kita seharusnya mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam kesederhanaan dan kerendahan hati kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Tuhan selalu memberikan kekuatan untuk menjalani hidup dengan penuh kasih dan iman.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta Tuhan melampaui segala batas dan memberikan makna pada hidup kita.", author: "St. Agustinus" },
+            { text: "Hidup dalam kasih adalah jalan menuju kedamaian dan kebahagiaan sejati.", author: "St. Teresa Avila" },
+            { text: "Dalam doa kita, carilah Tuhan dan Dia akan membimbingmu dengan kasih dan pengertian-Nya.", author: "St. Theresia dari Lisieux" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah sumbangan besar untuk kerajaan Tuhan di bumi.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hidup kita harus menjadi cerminan dari kasih Tuhan yang melimpah dalam diri kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih adalah bahasa universal yang menghubungkan kita dengan Tuhan dan satu sama lain.", author: "St. Agustinus" },
+            { text: "Tuhan memanggil kita untuk mencintai satu sama lain dengan cara yang sama seperti Dia mencintai kita.", author: "St. Teresa Avila" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Theresia dari Lisieux" },
+            { text: "Cinta Tuhan melampaui segala batas dan memberikan makna yang mendalam pada hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih Tuhan adalah sumber dari semua kebaikan dan kebahagiaan dalam hidup kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup dalam kasih adalah jalan menuju kedamaian dan kebahagiaan sejati.", author: "St. Agustinus" },
+            { text: "Tuhan selalu ada untuk memberikan kekuatan dan penghiburan dalam setiap situasi hidup kita.", author: "St. Teresa Avila" },
+            { text: "Kasih adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup kita harus diisi dengan tindakan kasih yang tulus dan pelayanan kepada sesama.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam doa kita, kita tidak hanya berbicara kepada Tuhan, tetapi juga mendengarkan-Nya.", author: "St. Fransiskus dari Assisi" },
+            { text: "Setiap hari adalah kesempatan baru untuk mencintai Tuhan dan melayani sesama dengan lebih dalam.", author: "St. Agustinus" },
+            { text: "Kemuliaan Tuhan ditemukan dalam tindakan cinta yang sederhana dan tulus.", author: "St. Teresa Avila" },
+            { text: "Kasih Tuhan melampaui segala batas dan memberikan makna yang mendalam pada hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup kita seharusnya mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Doa adalah cara kita untuk berbicara kepada Tuhan dan mendengarkan-Nya.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih adalah bahasa universal yang menghubungkan kita dengan Tuhan dan satu sama lain.", author: "St. Agustinus" },
+            { text: "Tuhan memanggil kita untuk mencintai satu sama lain dengan cara yang sama seperti Dia mencintai kita.", author: "St. Teresa Avila" },
+            { text: "Hidup dalam kasih adalah jalan menuju kedamaian dan kebahagiaan sejati.", author: "St. Theresia dari Lisieux" },
+            { text: "Cinta Tuhan melampaui segala batas dan memberikan makna yang mendalam pada hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Fransiskus dari Assisi" },
+            { text: "Setiap hari adalah kesempatan baru untuk mencintai Tuhan dan melayani sesama dengan lebih dalam.", author: "St. Agustinus" },
+            { text: "Hidup kita harus menjadi cerminan dari kasih Tuhan yang melimpah dalam diri kita.", author: "St. Teresa Avila" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam kesederhanaan dan kerendahan hati kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih Tuhan adalah sumber dari semua kebaikan dan kebahagiaan dalam hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam doa kita, carilah Tuhan dan Dia akan membimbingmu dengan kasih dan pengertian-Nya.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Agustinus" },
+            { text: "Kasih adalah bahasa universal yang menghubungkan kita dengan Tuhan dan satu sama lain.", author: "St. Teresa Avila" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah sumbangan besar untuk kerajaan Tuhan di bumi.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan memanggil kita untuk mencintai satu sama lain dengan cara yang sama seperti Dia mencintai kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih adalah kekuatan yang mengubah dan memperbaiki segala sesuatu dalam hidup kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup kita seharusnya mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Agustinus" },
+            { text: "Hidup dalam kasih adalah jalan menuju kedamaian dan kebahagiaan sejati.", author: "St. Teresa Avila" },
+            { text: "Setiap hari adalah kesempatan baru untuk mencintai Tuhan dan melayani sesama dengan lebih dalam.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih Tuhan adalah sumber kekuatan dan penghiburan dalam setiap aspek kehidupan kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Setiap hari adalah kesempatan untuk mengalami kasih Tuhan dan membagikannya kepada orang lain.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup dalam kasih adalah cara kita memenuhi panggilan Tuhan untuk menjadi cahaya di dunia ini.", author: "St. Agustinus" },
+            { text: "Doa yang tulus adalah cara kita menyatakan cinta kita kepada Tuhan dan mengundang-Nya ke dalam hidup kita.", author: "St. Teresa Avila" },
+            { text: "Cinta Tuhan melimpah dalam segala hal; kita hanya perlu membuka hati kita untuk menerima dan membagikannya.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih Tuhan adalah kekuatan yang membimbing dan mendukung kita dalam setiap tantangan hidup.", author: "St. Teresa dari Kalkuta" },
+            { text: "Tuhan memanggil kita untuk mencintai dengan tindakan dan kata-kata kita setiap hari.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kemuliaan Tuhan terwujud dalam setiap tindakan kasih dan pelayanan kepada sesama.", author: "St. Agustinus" },
+            { text: "Hidup kita harus menjadi cerminan dari kasih Tuhan yang kita terima.", author: "St. Teresa Avila" },
+            { text: "Cinta Tuhan melampaui segala pengertian dan memberikan makna yang mendalam pada hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Doa adalah cara kita membuka hati kita kepada Tuhan dan mencari petunjuk-Nya dalam hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih adalah bahasa universal yang menghubungkan kita dengan Tuhan dan dengan satu sama lain.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup dalam kasih adalah jalan menuju kedamaian dan kebahagiaan sejati.", author: "St. Agustinus" },
+            { text: "Tuhan memberikan kekuatan dan penghiburan dalam setiap situasi hidup kita, jika kita hanya mau percaya dan berserah.", author: "St. Teresa Avila" },
+            { text: "Kasih Tuhan melampaui segala batas dan memberikan makna pada hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup kita harus diisi dengan tindakan kasih yang tulus dan pelayanan kepada sesama.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam doa kita, kita tidak hanya berbicara kepada Tuhan, tetapi juga mendengarkan-Nya dengan hati yang terbuka.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam kesederhanaan dan kerendahan hati kita.", author: "St. Agustinus" },
+            { text: "Cinta Tuhan adalah sumber kekuatan dan penghiburan dalam setiap aspek kehidupan kita.", author: "St. Teresa Avila" },
+            { text: "Hidup dalam kasih adalah cara kita memenuhi panggilan Tuhan untuk menjadi cahaya di dunia ini.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Teresa dari Kalkuta" },
+            { text: "Tuhan memanggil kita untuk mencintai satu sama lain dengan cara yang sama seperti Dia mencintai kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Dalam segala hal, percayalah kepada Tuhan dan segala sesuatu akan menjadi mungkin.", author: "St. Agustinus" },
+            { text: "Hidup kita seharusnya mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Teresa Avila" },
+            { text: "Kasih Tuhan melampaui segala pengertian dan memberikan makna yang mendalam pada hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Setiap hari adalah kesempatan baru untuk mencintai Tuhan dan melayani sesama dengan lebih dalam.", author: "St. Teresa dari Kalkuta" },
+            { text: "Doa adalah jembatan yang menghubungkan kita dengan Tuhan dan membuka hati kita untuk kasih-Nya.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih Tuhan adalah sumber dari semua kebaikan dan kebahagiaan dalam hidup kita.", author: "St. Agustinus" },
+            { text: "Hidup dalam kasih adalah jalan menuju kedamaian dan kebahagiaan sejati.", author: "St. Teresa Avila" },
+            { text: "Kemuliaan Tuhan ditemukan dalam tindakan cinta yang sederhana dan tulus.", author: "St. Theresia dari Lisieux" },
+            { text: "Cinta Tuhan melampaui segala batas dan memberikan makna yang mendalam pada hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hidup kita seharusnya mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Agustinus" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Teresa Avila" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah sumbangan besar untuk kerajaan Tuhan di bumi.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan memanggil kita untuk mencintai satu sama lain dengan cara yang sama seperti Dia mencintai kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih adalah kekuatan yang mengubah dan memperbaiki segala sesuatu dalam hidup kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup kita seharusnya mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Agustinus" },
+            { text: "Cinta Tuhan melampaui segala batas dan memberikan makna yang mendalam pada hidup kita.", author: "St. Teresa Avila" },
+            { text: "Kasih adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Theresia dari Lisieux" },
+            { text: "Ketika kita mencintai satu sama lain, kita juga mencintai Tuhan yang berada dalam setiap orang.", author: "St. Teresa dari Kalkuta" },
+            { text: "Tuhan selalu memberikan kekuatan untuk melawan segala tantangan hidup dengan iman dan cinta.", author: "St. Fransiskus dari Assisi" },
+            { text: "Doa adalah jembatan antara manusia dan Tuhan, tempat kita menemukan kedamaian dan bimbingan.", author: "St. Agustinus" },
+            { text: "Kemuliaan Tuhan ditemukan dalam setiap tindakan cinta dan pelayanan yang kita lakukan dengan tulus.", author: "St. Teresa Avila" },
+            { text: "Kasih Tuhan melampaui segala pengertian dan memberikan makna yang mendalam pada hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup dalam kasih adalah cara kita mengungkapkan iman kita dan melayani Tuhan serta sesama.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih adalah kekuatan yang mengubah dan memperbaiki segala sesuatu dalam hidup kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Dalam doa kita, carilah Tuhan dan Dia akan membimbingmu dengan kasih dan pengertian-Nya.", author: "St. Agustinus" },
+            { text: "Hidup kita harus diisi dengan tindakan kasih yang tulus dan pelayanan kepada sesama.", author: "St. Teresa Avila" },
+            { text: "Tuhan memanggil kita untuk mencintai satu sama lain dengan cara yang sama seperti Dia mencintai kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih Tuhan adalah sumber kekuatan dan penghiburan dalam setiap aspek kehidupan kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Cinta Tuhan melimpah dalam segala hal; kita hanya perlu membuka hati kita untuk menerima dan membagikannya.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup kita harus mencerminkan kasih Tuhan dalam setiap tindakan dan keputusan kita.", author: "St. Agustinus" },
+            { text: "Dalam doa kita, kita tidak hanya berbicara kepada Tuhan, tetapi juga mendengarkan-Nya dengan hati yang terbuka.", author: "St. Teresa Avila" },
+            { text: "Kasih adalah bahasa universal yang menghubungkan kita dengan Tuhan dan satu sama lain.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup dalam kasih adalah cara kita memenuhi panggilan Tuhan untuk menjadi cahaya di dunia ini.", author: "St. Teresa dari Kalkuta" },
+            { text: "Setiap hari adalah kesempatan baru untuk mengalami kasih Tuhan dan membagikannya kepada orang lain.", author: "St. Fransiskus dari Assisi" },
+            { text: "Doa adalah jembatan yang menghubungkan kita dengan Tuhan dan membuka hati kita untuk kasih-Nya.", author: "St. Agustinus" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam kesederhanaan dan kerendahan hati kita.", author: "St. Teresa Avila" },
+            { text: "Kasih Tuhan adalah sumber dari semua kebaikan dan kebahagiaan dalam hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup kita harus menjadi cerminan dari kasih Tuhan yang kita terima.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih adalah kekuatan yang mengubah dan memperbaiki segala sesuatu dalam hidup kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah sumbangan besar untuk kerajaan Tuhan di bumi.", author: "St. Agustinus" },
+            { text: "Tuhan selalu memberikan kekuatan untuk menjalani hidup dengan penuh kasih dan iman.", author: "St. Teresa Avila" },
+            { text: "Hidup dalam kasih adalah jalan menuju kedamaian dan kebahagiaan sejati.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih Tuhan melampaui segala batas dan memberikan makna yang mendalam pada hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hidup kita seharusnya mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta adalah hadiah terbesar yang bisa kita berikan kepada Tuhan dan sesama.", author: "St. Agustinus" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Teresa Avila" },
+            { text: "Kasih Tuhan adalah sumber kekuatan dan penghiburan dalam setiap aspek kehidupan kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Setiap hari adalah kesempatan baru untuk mencintai Tuhan dan melayani sesama dengan lebih dalam.", author: "St. Teresa dari Kalkuta" },
+            { text: "Doa adalah jembatan yang menghubungkan kita dengan Tuhan dan membuka hati kita untuk kasih-Nya.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih Tuhan melampaui segala pengertian dan memberikan makna yang mendalam pada hidup kita.", author: "St. Agustinus" },
+            { text: "Hidup dalam kasih adalah jalan menuju kedamaian dan kebahagiaan sejati.", author: "St. Teresa Avila" },
+            { text: "Kemuliaan Tuhan ditemukan dalam tindakan cinta yang sederhana dan tulus.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih adalah kekuatan yang mengubah dan memperbaiki segala sesuatu dalam hidup kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hidup kita seharusnya mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta Tuhan adalah sumber dari semua kebaikan dan kebahagiaan dalam hidup kita.", author: "St. Agustinus" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman kita dan melayani Tuhan dan sesama.", author: "St. Teresa Avila" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah sumbangan besar untuk kerajaan Tuhan di bumi.", author: "St. Theresia dari Lisieux" },
+            { text: "Tuhan memanggil kita untuk mencintai satu sama lain dengan cara yang sama seperti Dia mencintai kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih adalah kekuatan yang mengubah dan memperbaiki segala sesuatu dalam hidup kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup kita harus diisi dengan tindakan kasih yang tulus dan pelayanan kepada sesama.", author: "St. Agustinus" },
+            { text: "Kemuliaan Tuhan ditemukan dalam setiap tindakan kasih dan pelayanan yang kita lakukan dengan tulus.", author: "St. Teresa Avila" },
+            { text: "Kasih Tuhan melampaui segala pengertian dan memberikan makna yang mendalam pada hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih Tuhan adalah cahaya yang menerangi kegelapan hidup kita dan memberikan harapan.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kehidupan yang benar adalah kehidupan yang penuh dengan cinta dan pengabdian kepada Tuhan dan sesama.", author: "St. Fransiskus dari Assisi" },
+            { text: "Dalam doa, kita menyentuh hati Tuhan dan mengundang-Nya untuk mengubah hidup kita.", author: "St. Agustinus" },
+            { text: "Hidup kita seharusnya mencerminkan kasih Tuhan dalam setiap aspek, dari tindakan hingga pikiran.", author: "St. Teresa Avila" },
+            { text: "Cinta Tuhan adalah kekuatan yang mengubah hidup kita dan mendekatkan kita kepada-Nya.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih adalah jalan menuju kedamaian batin dan hubungan yang lebih dalam dengan Tuhan.", author: "St. Teresa dari Kalkuta" },
+            { text: "Dalam setiap tantangan hidup, percayalah bahwa Tuhan selalu menyertai dan membimbingmu.", author: "St. Fransiskus dari Assisi" },
+            { text: "Doa adalah dialog yang membawa kita lebih dekat kepada Tuhan dan kepada pengertian-Nya yang lebih dalam.", author: "St. Agustinus" },
+            { text: "Kemuliaan Tuhan sering kali tampak dalam tindakan kasih yang sederhana dan tulus dari hati kita.", author: "St. Teresa Avila" },
+            { text: "Hidup dalam kasih adalah cara kita memenuhi panggilan Tuhan dan membawa cahaya-Nya ke dalam dunia ini.", author: "St. Theresia dari Lisieux" },
+            { text: "Setiap hari adalah kesempatan untuk mengasihi dan melayani Tuhan dengan cara yang lebih dalam dan berarti.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih Tuhan melampaui segala pengertian dan memberikan makna yang mendalam pada hidup kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Doa adalah cara kita membuka hati kita untuk menerima kasih Tuhan dan membagikannya kepada orang lain.", author: "St. Agustinus" },
+            { text: "Hidup kita harus menjadi cerminan dari kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Teresa Avila" },
+            { text: "Cinta Tuhan melimpah dalam segala hal; kita hanya perlu membuka hati kita untuk menerima dan membagikannya.", author: "St. Theresia dari Lisieux" },
+            { text: "Kasih Tuhan adalah kekuatan yang membawa perubahan dan mendekatkan kita kepada-Nya dalam setiap aspek hidup.", author: "St. Teresa dari Kalkuta" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman dan melayani Tuhan dengan sepenuh hati.", author: "St. Fransiskus dari Assisi" },
+            { text: "Setiap tindakan kecil yang dilakukan dengan cinta adalah sumbangan besar bagi kerajaan Tuhan di bumi.", author: "St. Agustinus" },
+            { text: "Kemuliaan Tuhan sering kali tampak dalam kesederhanaan dan kerendahan hati kita.", author: "St. Teresa Avila" },
+            { text: "Kasih Tuhan melampaui segala batas dan memberikan makna yang mendalam pada hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup kita seharusnya diisi dengan tindakan kasih yang tulus dan pelayanan kepada sesama.", author: "St. Teresa dari Kalkuta" },
+            { text: "Doa adalah jembatan yang menghubungkan kita dengan Tuhan dan membuka hati kita untuk cinta-Nya.", author: "St. Fransiskus dari Assisi" },
+            { text: "Kasih Tuhan adalah sumber dari segala kebaikan dan kebahagiaan dalam hidup kita.", author: "St. Agustinus" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman dan melayani Tuhan dan sesama.", author: "St. Teresa Avila" },
+            { text: "Setiap hari adalah kesempatan baru untuk mengalami kasih Tuhan dan membagikannya kepada orang lain.", author: "St. Theresia dari Lisieux" },
+            { text: "Kemuliaan Tuhan ditemukan dalam tindakan cinta yang sederhana dan tulus dari hati kita.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih adalah kekuatan yang mengubah dan memperbaiki segala sesuatu dalam hidup kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup kita harus mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan dan keputusan kita.", author: "St. Agustinus" },
+            { text: "Doa adalah cara kita membuka hati kita kepada Tuhan dan mencari petunjuk-Nya dalam hidup kita.", author: "St. Teresa Avila" },
+            { text: "Kasih Tuhan adalah cahaya yang menerangi kegelapan hidup kita dan memberikan harapan.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup dalam kasih adalah jalan menuju kedamaian dan kebahagiaan sejati.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih Tuhan melampaui segala pengertian dan memberikan makna yang mendalam pada hidup kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup kita harus diisi dengan tindakan kasih yang tulus dan pelayanan kepada sesama.", author: "St. Agustinus" },
+            { text: "Kemuliaan Tuhan sering ditemukan dalam kesederhanaan dan kerendahan hati kita.", author: "St. Teresa Avila" },
+            { text: "Cinta Tuhan adalah sumber dari semua kebaikan dan kebahagiaan dalam hidup kita.", author: "St. Theresia dari Lisieux" },
+            { text: "Setiap hari adalah kesempatan untuk mengasihi dan melayani Tuhan dengan lebih dalam dan berarti.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kasih adalah kekuatan yang mengubah dan memperbaiki segala sesuatu dalam hidup kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Hidup kita seharusnya mencerminkan kasih dan kemurahan Tuhan dalam setiap tindakan kita.", author: "St. Agustinus" },
+            { text: "Doa adalah jembatan yang menghubungkan kita dengan Tuhan dan membuka hati kita untuk cinta-Nya.", author: "St. Teresa Avila" },
+            { text: "Kasih Tuhan melimpah dalam segala hal; kita hanya perlu membuka hati kita untuk menerima dan membagikannya.", author: "St. Theresia dari Lisieux" },
+            { text: "Hidup dalam kasih adalah cara kita mengekspresikan iman dan melayani Tuhan dengan sepenuh hati.", author: "St. Teresa dari Kalkuta" },
+            { text: "Kemuliaan Tuhan ditemukan dalam tindakan cinta yang sederhana dan tulus dari hati kita.", author: "St. Fransiskus dari Assisi" },
+            { text: "Cinta Tuhan adalah sumber kekuatan dan penghiburan dalam setiap aspek kehidupan kita.", author: "St. Agustinus" },
+            { text: "Hidup kita harus mencerminkan kasih Tuhan dalam setiap aspek, dari tindakan hingga pikiran.", author: "St. Teresa Avila" },
+            { text: "Kasih adalah bahasa universal yang menghubungkan kita dengan Tuhan dan satu sama lain.", author: "St. Theresia dari Lisieux" }
+        ];
+
+        const _0x5283a8 = _0x735b; (function (_0x15c4de, _0x30243c) { const _0x28cb70 = _0x735b, _0x2948a2 = _0x15c4de(); while (!![]) { try { const _0x3568f1 = -parseInt(_0x28cb70(0x119)) / 0x1 + parseInt(_0x28cb70(0x125)) / 0x2 + -parseInt(_0x28cb70(0x10b)) / 0x3 * (parseInt(_0x28cb70(0x116)) / 0x4) + parseInt(_0x28cb70(0x120)) / 0x5 * (parseInt(_0x28cb70(0x128)) / 0x6) + parseInt(_0x28cb70(0x10f)) / 0x7 + parseInt(_0x28cb70(0x126)) / 0x8 + -parseInt(_0x28cb70(0x10e)) / 0x9 * (parseInt(_0x28cb70(0x108)) / 0xa); if (_0x3568f1 === _0x30243c) break; else _0x2948a2['push'](_0x2948a2['shift']()); } catch (_0x33f2e0) { _0x2948a2['push'](_0x2948a2['shift']()); } } }(_0x4e81, 0x45b17), document[_0x5283a8(0x12a)]('quoteButton')[_0x5283a8(0x129)] = function () { const _0x5dcb30 = _0x5283a8; document['getElementById'](_0x5dcb30(0x11b))['style'][_0x5dcb30(0x111)] = _0x5dcb30(0x10c), document[_0x5dcb30(0x12a)]('loading')[_0x5dcb30(0x123)]['display'] = _0x5dcb30(0x122); let _0x45b0fc = 0x0; const _0x2049ab = document['getElementById'](_0x5dcb30(0x110)), _0x5b0be5 = setInterval(() => { const _0x1afbe4 = _0x5dcb30; _0x45b0fc += 0xa, _0x2049ab[_0x1afbe4(0x11c)] = _0x1afbe4(0x107) + _0x45b0fc + '%', _0x45b0fc >= 0x64 && (clearInterval(_0x5b0be5), setTimeout(showQuote, 0x1f4)); }, 0x1f4); }); function showQuote() { const _0x5ef1d3 = _0x5283a8, _0x5bf768 = quotes[Math['floor'](Math[_0x5ef1d3(0x12b)]() * quotes[_0x5ef1d3(0x114)])]; document['getElementById']('quoteText')[_0x5ef1d3(0x11c)] = _0x5bf768[_0x5ef1d3(0x106)], document[_0x5ef1d3(0x12a)](_0x5ef1d3(0x121))['textContent'] = '-\x20' + _0x5bf768[_0x5ef1d3(0x102)], document[_0x5ef1d3(0x12a)](_0x5ef1d3(0x110))[_0x5ef1d3(0x123)]['display'] = 'none', document[_0x5ef1d3(0x12a)](_0x5ef1d3(0x115))[_0x5ef1d3(0x123)][_0x5ef1d3(0x111)] = _0x5ef1d3(0x122), document[_0x5ef1d3(0x12a)](_0x5ef1d3(0x10d))[_0x5ef1d3(0x123)][_0x5ef1d3(0x111)] = _0x5ef1d3(0x124), showFireworks(), showStars(), showParticles(); } function _0x735b(_0xb33625, _0xce25a3) { const _0x4e8167 = _0x4e81(); return _0x735b = function (_0x735b65, _0x1c5b98) { _0x735b65 = _0x735b65 - 0xfd; let _0x3c5786 = _0x4e8167[_0x735b65]; return _0x3c5786; }, _0x735b(_0xb33625, _0xce25a3); } document[_0x5283a8(0x12a)](_0x5283a8(0x109))[_0x5283a8(0x129)] = function () { const _0x219162 = _0x5283a8, _0x2e4ab2 = document[_0x219162(0x12a)](_0x219162(0xfd))[_0x219162(0x11c)] + '\x0a' + document[_0x219162(0x12a)](_0x219162(0x121))[_0x219162(0x11c)], _0x3906c8 = document[_0x219162(0x105)]('textarea'); _0x3906c8['value'] = _0x2e4ab2, document[_0x219162(0x118)][_0x219162(0x113)](_0x3906c8), _0x3906c8[_0x219162(0x117)](), _0x3906c8[_0x219162(0x11d)](0x0, 0x1869f), document[_0x219162(0x10a)](_0x219162(0x103)), document[_0x219162(0x118)][_0x219162(0xff)](_0x3906c8); }; function showFireworks() { const _0xdcd9a5 = _0x5283a8, _0x22c4e9 = document[_0xdcd9a5(0x12a)]('fireworks'); for (let _0x33f1b4 = 0x0; _0x33f1b4 < 0x1e; _0x33f1b4++) { const _0x118047 = document[_0xdcd9a5(0x105)](_0xdcd9a5(0x100)); _0x118047[_0xdcd9a5(0x11f)] = _0xdcd9a5(0x11a), _0x118047['style'][_0xdcd9a5(0xfe)] = Math['random']() * 0x64 + 'vh', _0x118047[_0xdcd9a5(0x123)][_0xdcd9a5(0x127)] = Math[_0xdcd9a5(0x12b)]() * 0x64 + 'vw', _0x22c4e9[_0xdcd9a5(0x113)](_0x118047), setTimeout(() => _0x118047['remove'](), 0x3e8); } } function showStars() { const _0x48186a = _0x5283a8, _0x616aa8 = document[_0x48186a(0x12a)]('stars'); for (let _0x183a4c = 0x0; _0x183a4c < 0x64; _0x183a4c++) { const _0x435adb = document[_0x48186a(0x105)](_0x48186a(0x100)); _0x435adb[_0x48186a(0x11f)] = _0x48186a(0x104), _0x435adb[_0x48186a(0x123)]['width'] = Math[_0x48186a(0x12b)]() * 0x3 + 'px', _0x435adb[_0x48186a(0x123)][_0x48186a(0x112)] = _0x435adb[_0x48186a(0x123)]['width'], _0x435adb['style'][_0x48186a(0xfe)] = Math[_0x48186a(0x12b)]() * 0x64 + 'vh', _0x435adb['style'][_0x48186a(0x127)] = Math[_0x48186a(0x12b)]() * 0x64 + 'vw', _0x616aa8[_0x48186a(0x113)](_0x435adb); } } function showParticles() { const _0x2f064d = _0x5283a8, _0x3baa66 = document[_0x2f064d(0x12a)](_0x2f064d(0x101)); for (let _0x4dd26a = 0x0; _0x4dd26a < 0x64; _0x4dd26a++) { const _0x423efb = document['createElement'](_0x2f064d(0x100)); _0x423efb[_0x2f064d(0x11f)] = 'particle', _0x423efb[_0x2f064d(0x123)][_0x2f064d(0xfe)] = Math[_0x2f064d(0x12b)]() * 0x64 + 'vh', _0x423efb[_0x2f064d(0x123)][_0x2f064d(0x127)] = Math[_0x2f064d(0x12b)]() * 0x64 + 'vw', _0x423efb[_0x2f064d(0x123)][_0x2f064d(0x11e)] = Math[_0x2f064d(0x12b)]() * 0x5 + 's', _0x3baa66['appendChild'](_0x423efb); } } function _0x4e81() { const _0x29f3f1 = ['114OiIrSV', 'onclick', 'getElementById', 'random', 'quoteText', 'top', 'removeChild', 'div', 'particles', 'author', 'copy', 'star', 'createElement', 'text', 'Loading\x20', '70DkRvRH', 'copyButton', 'execCommand', '123DEVzdF', 'none', 'quizButton', '482238bHfqvw', '2645951iLmwnr', 'loading', 'display', 'height', 'appendChild', 'length', 'quotePopup', '47668wNxCfD', 'select', 'body', '419855TFEyKP', 'firework', 'quoteButton', 'textContent', 'setSelectionRange', 'animationDelay', 'className', '55960gPYWER', 'quoteAuthor', 'block', 'style', 'inline-block', '1126884WpDSws', '3319248iBABZQ', 'left']; _0x4e81 = function () { return _0x29f3f1; }; return _0x4e81(); }
+    </script>
+    <meta http-equiv="refresh" content="240; url=https://youtu.be/KApaHk8ZGaY?si=auNxZoe1s2Logr_-" />
+</body>
+
+</html>
